@@ -1,14 +1,15 @@
 <script lang="ts">
   import { documents } from "./stores/documents";
+  import { apiKey } from "./stores/apiKey";
 
-  const token = "***REMOVED***"; // use your access token here
+  let isLoading = false;
 
   function timeout(ms = 0) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   const fetchDocumentListApi = async (updatedAfter = null, location = null) => {
-    let fullData = [];
+    isLoading = true;
     let nextPageCursor = null;
 
     while (true) {
@@ -31,12 +32,12 @@
         {
           method: "GET",
           headers: {
-            Authorization: `Token ${token}`,
+            Authorization: `Token ${$apiKey}`,
           },
         },
       );
       const responseJson = await response.json();
-      fullData.push(...responseJson["results"]);
+      documents.update((docs) => [...docs, ...responseJson["results"]]);
       nextPageCursor = responseJson["nextPageCursor"];
       if (!nextPageCursor) {
         if (response.headers.has("retryAfter")) {
@@ -46,15 +47,12 @@
         }
       }
     }
-    console.log("fetchDocumentListApi", fullData);
-    documents.set(fullData);
 
-    return fullData;
+    isLoading = false;
   };
 
   // Get all of a user's documents from all time
   //     const allData = await fetchDocumentListApi();
-  const allData = $documents.length ? $documents : fetchDocumentListApi();
 
   // Get all of a user's archived documents
   //     const archivedData = await fetchDocumentListApi(location = 'archive');
@@ -62,14 +60,23 @@
   // Later, if you want to get new documents updated after some date, do this:
   //     const docsAfterDate = new Date(Date.now() - 24 * 60 * 60 * 1000);  // use your own stored date
   //     const newData = await fetchDocumentListApi(docsAfterDate.toISOString());
-
-  // console.log('App', allData)
 </script>
 
-{#await allData}
-  Loading documents...
-{:then allData}
-  Your next planet is {allData.length}.
-{:catch someError}
-  System error: {someError.message}.
-{/await}
+{#if isLoading}
+  <p>Loading...</p>
+{/if}
+
+{#if !$apiKey}
+  <p>Please set your API key above.</p>
+{:else if $documents.length}
+  <p>You have {$documents.length} documents.</p>
+
+  <button
+    on:click={() => {
+      documents.set([]);
+      fetchDocumentListApi();
+    }}>Reload all documents</button
+  >
+{:else}
+  <button on:click={() => fetchDocumentListApi()}>Load all documents</button>
+{/if}
