@@ -4,5 +4,6 @@
 
 <form on:submit|preventDefault>
   <label for="apiKey">API Key</label>:
-  <input bind:value={$apiKey} />
+
+  <input bind:value={$apiKey} size="48" />
 </form>

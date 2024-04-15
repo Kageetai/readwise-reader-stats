@@ -4,9 +4,7 @@
 
   let isLoading = false;
 
-  function timeout(ms = 0) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  const timeout = (ms = 0) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const fetchDocumentListApi = async (updatedAfter = null, location = null) => {
     isLoading = true;
@@ -26,7 +24,7 @@
       console.log(
         "Making export api request with params " + queryParams.toString(),
       );
-      await timeout(3000); // rate limiting of API
+      await timeout(3000); // throttling due to rate limiting of API
       const response = await fetch(
         "https://readwise.io/api/v3/list/?" + queryParams.toString(),
         {
@@ -51,6 +49,11 @@
     isLoading = false;
   };
 
+  const fetchAll = () => {
+    documents.set([]);
+    fetchDocumentListApi();
+  };
+
   // Get all of a user's documents from all time
   //     const allData = await fetchDocumentListApi();
 
@@ -64,19 +67,12 @@
 
 {#if isLoading}
   <p>Loading...</p>
+{:else}
+  <button on:click={fetchAll}>(Re)Fetch all documents</button>
 {/if}
 
 {#if !$apiKey}
   <p>Please set your API key above.</p>
 {:else if $documents.length}
-  <p>You have {$documents.length} documents.</p>
-
-  <button
-    on:click={() => {
-      documents.set([]);
-      fetchDocumentListApi();
-    }}>Reload all documents</button
-  >
-{:else}
-  <button on:click={() => fetchDocumentListApi()}>Load all documents</button>
+  <p>{$documents.length} loaded.</p>
 {/if}
