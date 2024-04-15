@@ -1,6 +1,7 @@
 <script lang="ts">
   import { documents } from "../stores/documents";
   import groupBy from "lodash/groupBy";
+  import { toPercentage } from "../utils/format";
 
   const byLocation = groupBy($documents, "location");
 </script>
@@ -16,7 +17,7 @@
     <tr>
       <td>{name}</td>
       <td>{values.length}</td>
-      <td>{((values.length / $documents.length) * 100).toFixed(2)}%</td>
+      <td>{toPercentage(values.length, $documents.length)}%</td>
     </tr>
   {/each}
 </table>

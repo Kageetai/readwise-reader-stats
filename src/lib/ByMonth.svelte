@@ -3,17 +3,20 @@
   import groupBy from "lodash/groupBy";
   import { toPercentage } from "../utils/format";
 
-  const byCategory = groupBy($documents, "category");
+  const byMonth = groupBy($documents, (doc) => {
+    const created_at = new Date(doc.created_at);
+    return `${created_at.getUTCFullYear()}-${created_at.getUTCMonth()}`;
+  });
 </script>
 
 <table>
   <tr>
-    <th>Category</th>
+    <th>Date</th>
     <th>Absolute</th>
     <th>Relative</th>
   </tr>
 
-  {#each Object.entries(byCategory) as [name, values]}
+  {#each Object.entries(byMonth) as [name, values]}
     <tr>
       <td>{name}</td>
       <td>{values.length}</td>

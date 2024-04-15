@@ -80,6 +80,12 @@ input {
   border-color: #4046a8;
 }
 
+details summary {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
