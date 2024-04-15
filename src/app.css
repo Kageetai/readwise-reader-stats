@@ -67,6 +67,14 @@ input {
   }
 }
 
+table {
+  th,
+  td {
+    padding: 0.25em 0.5em;
+    text-align: right;
+  }
+}
+
 input {
   font-family: "Courier New", monospace;
   border-color: #4046a8;
