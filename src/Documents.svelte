@@ -65,11 +65,11 @@
   //     const newData = await fetchDocumentListApi(docsAfterDate.toISOString());
 </script>
 
-{#if isLoading}
-  <p>Loading...</p>
-{:else}
-  <button on:click={fetchAll}>(Re)Fetch all documents</button>
-{/if}
+<button on:click={fetchAll} disabled={!$apiKey || isLoading}>
+  {#if isLoading}Loading...
+  {:else}(Re)Fetch all documents
+  {/if}
+</button>
 
 {#if !$apiKey}
   <p>Please set your API key above.</p>
