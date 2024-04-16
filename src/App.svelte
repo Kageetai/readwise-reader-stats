@@ -5,12 +5,15 @@
   import ByLocation from "./lib/ByLocation.svelte";
   import { documents } from "./stores/documents";
   import OverTime from "./lib/ByMonth.svelte";
+  import { apiKey } from "./stores/apiKey";
 </script>
 
-<main>
+<header>
   <h1>Readwise Reader Statistics</h1>
+</header>
 
-  <details open={!$documents}>
+<main>
+  <details open={!$documents.length || !$apiKey}>
     <summary>Settings</summary>
 
     <div class="card">
@@ -22,19 +25,21 @@
     </div>
   </details>
 
-  <div class="inline">
-    <div class="card">
-      <ByCategory />
+  {#if $documents.length}
+    <div class="inline">
+      <div class="card">
+        <ByCategory />
+      </div>
+
+      <div class="card">
+        <ByLocation />
+      </div>
     </div>
 
     <div class="card">
-      <ByLocation />
+      <OverTime />
     </div>
-  </div>
-
-  <div class="card">
-    <OverTime />
-  </div>
+  {/if}
 </main>
 
 <style>
