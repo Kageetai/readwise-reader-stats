@@ -5,13 +5,13 @@
 
   const byMonth = groupBy($documents, (doc) => {
     const created_at = new Date(doc.created_at);
-    return `${created_at.getUTCFullYear()}-${created_at.getUTCMonth()}`;
+    return `${created_at.getUTCFullYear()}-${String(created_at.getUTCMonth()).padStart(2, "0")}`;
   });
 </script>
 
 <table>
   <tr>
-    <th>Date</th>
+    <th>Month</th>
     <th>Absolute</th>
     <th>Relative</th>
   </tr>
